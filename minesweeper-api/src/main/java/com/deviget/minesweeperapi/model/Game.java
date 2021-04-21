@@ -41,6 +41,7 @@ public class Game {
     @Column (name ="game_date")
     private LocalDate gameDate;
 
-
+    @Column (name ="game_time")
+    private long gameTime;
 
 }
