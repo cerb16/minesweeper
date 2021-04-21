@@ -1,0 +1,88 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Esteban">
+        <sql>
+            CREATE TABLE user (
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            user_name VARCHAR(50) NOT NULL,
+            name VARCHAR(250),
+            last_name VARCHAR(250),
+            CONSTRAINT pk_id PRIMARY KEY (id)
+            );
+        </sql>
+        <rollback>
+            DROP TABLE user;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="Esteban">
+        <sql>
+            CREATE TABLE game_status (
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            status VARCHAR(250),
+            CONSTRAINT pk_id PRIMARY KEY (id)
+            );
+        </sql>
+        <rollback>
+            DROP TABLE game_status;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="Esteban">
+        <sql>
+            CREATE TABLE game (
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            user_id BIGINT NOT NULL,
+            game_status_id BIGINT NOT NULL,
+            rows INT,
+            colums INT,
+            mines INT,
+            game_date DateTime,
+            CONSTRAINT pk_id PRIMARY KEY (id),
+            CONSTRAINT fk_game_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
+            CONSTRAINT fk_game_gamestatus FOREIGN KEY (game_status_id) REFERENCES game_status(id) ON DELETE CASCADE ON UPDATE CASCADE
+            );
+        </sql>
+        <rollback>
+            DROP TABLE game;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="Esteban">
+        <sql>
+            CREATE TABLE cell (
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            game_id BIGINT NOT NULL,
+            x_position INT,
+            y_position INT ,
+            mine BIT,
+            flag BIT,
+            revealed BIT,
+            value INT,
+            CONSTRAINT pk_id PRIMARY KEY (id),
+            CONSTRAINT fk_cell_game FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE ON UPDATE CASCADE
+
+            );
+        </sql>
+        <rollback>
+            DROP TABLE cell;
+        </rollback>
+    </changeSet>
+    <changeSet id="5" author="Esteban">
+        <sql>
+            INSERT INTO game_status (status) VALUES ('Active');
+            INSERT INTO game_status (status) VALUES ('Pause');
+            INSERT INTO game_status (status) VALUES ('Victory');
+            INSERT INTO game_status (status) VALUES ('Defeat');
+        </sql>
+        <rollback>
+            TRUNCATE TABLE game_status;
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>
