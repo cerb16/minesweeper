@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -30,18 +30,27 @@ public class Game {
     private GameStatus gameStatus;
 
     @Column(name = "rows")
-    private int rows;
+    private Integer rows;
 
     @Column(name = "columns")
-    private int columns;
+    private Integer columns;
 
     @Column(name = "mines")
-    private int mines;
+    private Integer mines;
 
-    @Column (name ="game_date")
-    private LocalDate gameDate;
+    @Column(name = "pause")
+    private boolean pause;
+
+    @Column (name ="game_start_date")
+    private LocalDateTime gameStarDate;
+
+    @Column (name ="last_restart_date")
+    private LocalDateTime lastRestartDate;
+
+    @Column (name ="last_move_date")
+    private LocalDateTime lastMoveDate;
 
     @Column (name ="game_time")
-    private long gameTime;
+    private Long gameTime;
 
 }
