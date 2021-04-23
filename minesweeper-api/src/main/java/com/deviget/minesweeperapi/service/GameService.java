@@ -1,11 +1,14 @@
 package com.deviget.minesweeperapi.service;
 
 import com.deviget.minesweeperapi.model.Game;
+import com.deviget.minesweeperapi.model.requestDto.GameRequest;
+import com.deviget.minesweeperapi.model.requestDto.MoveRequest;
+import com.deviget.minesweeperapi.model.responseDto.MoveResponse;
 
 import java.util.List;
 
 public interface GameService {
-    Game newGame(Game game);
+    Game newGame(GameRequest game);
 
     Game pauseOrResumeGame(Game game);
 
@@ -17,4 +20,5 @@ public interface GameService {
 
     String deleteGame(Long gameId);
 
+    MoveResponse move(Game game, MoveRequest move);
 }

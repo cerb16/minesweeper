@@ -2,6 +2,9 @@ package com.deviget.minesweeperapi.controller;
 
 
 import com.deviget.minesweeperapi.model.Game;
+import com.deviget.minesweeperapi.model.GameStatus;
+import com.deviget.minesweeperapi.model.requestDto.GameRequest;
+import com.deviget.minesweeperapi.model.requestDto.MoveRequest;
 import com.deviget.minesweeperapi.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +25,7 @@ public class GameController {
     private GameService gameService;
 
     @PostMapping("/")
-    public ResponseEntity<?> newGame(@RequestBody Game game) {
+    public ResponseEntity<?> newGame(@RequestBody GameRequest game) {
         Game gameCreated = gameService.newGame(game);
         if(gameCreated != null){
             return new ResponseEntity<>(gameCreated, HttpStatus.CREATED);
@@ -35,10 +38,19 @@ public class GameController {
     @PutMapping("/{gameId}/pause-resume")
     public ResponseEntity<?> pauseOrResumeGame(@PathVariable Long gameId) {
         Game game = gameService.getGameById(gameId);
-        if(game != null && game.getGameStatus().getId() == 1L){
+        if(game != null && game.getGameStatus() == GameStatus.INPROCESS){
             return new ResponseEntity<>(gameService.pauseOrResumeGame(game), HttpStatus.OK);
         }
         return new ResponseEntity<>("This game can't be pause-resume", HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/{gameId}/pause-resume")
+    public ResponseEntity<?> move (@PathVariable Long gameId, @RequestBody MoveRequest move) {
+        Game game = gameService.getGameById(gameId);
+        if(game != null && game.getGameStatus() == GameStatus.INPROCESS){
+            return new ResponseEntity<>(gameService.move(game,move), HttpStatus.OK);
+        }
+        return new ResponseEntity<>("This game not exist or it is over", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/")

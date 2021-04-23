@@ -1,22 +1,8 @@
 package com.deviget.minesweeperapi.model;
 
-import lombok.Data;
+public enum  GameStatus {
+    INPROCESS,
+    VICTORY,
+    DEFEAT
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Data
-@Entity
-@Table(name = "game_status")
-public class GameStatus {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
-
-    @Column(name = "status")
-    private String status;
 }

@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,8 +27,8 @@ public class Game {
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="game_status_id", referencedColumnName = "id")
+    @Enumerated(value = EnumType.STRING)
+    @Column(name="game_status")
     private GameStatus gameStatus;
 
     @Column(name = "rows")

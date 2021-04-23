@@ -21,34 +21,20 @@
 
     <changeSet id="2" author="Esteban">
         <sql>
-            CREATE TABLE game_status (
-            id BIGINT NOT NULL,
-            status VARCHAR(250),
-            CONSTRAINT pk_id PRIMARY KEY (id)
-            );
-        </sql>
-        <rollback>
-            DROP TABLE game_status;
-        </rollback>
-    </changeSet>
-
-    <changeSet id="3" author="Esteban">
-        <sql>
             CREATE TABLE game (
             id BIGINT NOT NULL AUTO_INCREMENT,
             user_id BIGINT NOT NULL,
-            game_status_id BIGINT NOT NULL DEFAULT 1,
+            game_status VARCHAR(50),
             rows INT NOT NULL,
-            colums INT NOT NULL,
+            columns INT NOT NULL,
             mines INT NOT NULL,
-            pause BIT NOT NULL DEFAULT 0 ,
+            pause BIT  DEFAULT 0 ,
             game_start_date DateTime,
             last_restart_date DateTime,
             last_move_date DateTime,
-            game_time BIGINT NOT NULL DEFAULT 0,
+            game_time BIGINT  DEFAULT 0,
             CONSTRAINT pk_id PRIMARY KEY (id),
             CONSTRAINT fk_game_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
-            CONSTRAINT fk_game_gamestatus FOREIGN KEY (game_status_id) REFERENCES game_status(id) ON DELETE CASCADE ON UPDATE CASCADE
             );
         </sql>
         <rollback>
@@ -56,7 +42,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="4" author="Esteban">
+    <changeSet id="3" author="Esteban">
         <sql>
             CREATE TABLE cell (
             id BIGINT NOT NULL AUTO_INCREMENT,
@@ -74,16 +60,6 @@
         </sql>
         <rollback>
             DROP TABLE cell;
-        </rollback>
-    </changeSet>
-    <changeSet id="5" author="Esteban">
-        <sql>
-            INSERT INTO game_status (id,status) VALUES (1,'InProgress');
-            INSERT INTO game_status (id,status) VALUES (2,'Victory');
-            INSERT INTO game_status (id,status) VALUES (3,'Defeat');
-        </sql>
-        <rollback>
-            TRUNCATE TABLE game_status;
         </rollback>
     </changeSet>
 

@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface CellService {
     List<Cell> generateGameField(Game game);
+
+    List<Cell> findAllByGameId(Long id);
+
+    long saveMove(Cell cell);
 }

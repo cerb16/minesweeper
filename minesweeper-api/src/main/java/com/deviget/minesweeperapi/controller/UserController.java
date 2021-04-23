@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,7 +24,11 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+        if(userService.getByUserName(user.getUserName()) == null){
+            return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+        }else{
+            return  new ResponseEntity<>("This user name already exist.",HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping ("/")
@@ -34,15 +39,15 @@ public class UserController {
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
-    @GetMapping("/{userId}")
+    @GetMapping("/{userid}")
     public ResponseEntity<?> getUserById( @PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
-    @GetMapping("/{userName}")
-    public ResponseEntity<?> getByUserName( @PathVariable String UserName) {
-        return ResponseEntity.ok(userService.getByUserName(UserName));
+    @GetMapping("")
+    public ResponseEntity<?> getByUserName( @RequestParam("username") String userName) {
+        return ResponseEntity.ok(userService.getByUserName(userName));
     }
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/{userid}")
     public ResponseEntity<?> deleteUser( @PathVariable Long userId) {
         return ResponseEntity.ok(userService.deleteUser(userId));
     }
