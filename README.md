@@ -17,9 +17,9 @@ This repository contains an API which expose all the endpoints requiere to play 
 4- Win: you win when all no mine cells are being revealed <br />
 
 # Technical decisions
-1- Use list instead of arrays: I used list for some logic to avoid many transformation between list to arrays to modified and save data.
-2- Recursive funtion to reveal cells when it is not adjacent to a mine: best aproach to execute this kind of requirement.
-3- Allow user to play a cell by id or (X,Y) values: flexibility for ui implementations, developers use differents data structures in UI.
+1- Use list instead of arrays: I used list for some logic to avoid many transformation between list to arrays to modified and save data.<br />
+2- Recursive funtion to reveal cells when it is not adjacent to a mine: best aproach to execute this kind of requirement.<br />
+3- Allow user to play a cell by id or (X,Y) values: flexibility for ui implementations, developers use differents data structures in UI.<br />
 
 # Tech stack
 Leguage : Java 8<br />
