@@ -44,7 +44,7 @@ public class GameController {
         return new ResponseEntity<>("This game can't be pause-resume", HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/{gameId}/pause-resume")
+    @PutMapping("/{gameId}/move")
     public ResponseEntity<?> move (@PathVariable Long gameId, @RequestBody MoveRequest move) {
         Game game = gameService.getGameById(gameId);
         if(game != null && game.getGameStatus() == GameStatus.INPROCESS){

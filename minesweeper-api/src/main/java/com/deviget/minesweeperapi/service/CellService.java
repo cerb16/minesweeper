@@ -11,4 +11,6 @@ public interface CellService {
     List<Cell> findAllByGameId(Long id);
 
     long saveMove(Cell cell);
+
+    List<Cell> saveAll(List<Cell> cells);
 }

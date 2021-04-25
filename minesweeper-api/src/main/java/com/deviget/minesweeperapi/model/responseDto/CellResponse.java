@@ -4,10 +4,12 @@ import lombok.Data;
 
 @Data
 public class CellResponse {
+    private long id;
     private int xPosition;
     private int yPosition;
-    private long value;
-    private boolean mine;
-    private boolean flag;
+    private Integer value;
+    private Boolean mine;
+    private Boolean flag;
+    private Boolean revealed;
 
 }

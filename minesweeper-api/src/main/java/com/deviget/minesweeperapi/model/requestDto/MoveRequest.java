@@ -4,9 +4,11 @@ import lombok.Data;
 
 @Data
 public class MoveRequest {
-    private int xPosition;
+    private Long id;
 
-    private int yPosition;
+    private Integer xPosition;
 
-    private boolean flag;
+    private Integer  yPosition;
+
+    private Boolean flag;
 }

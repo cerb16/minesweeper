@@ -27,6 +27,7 @@ public class CellServiceImpl implements CellService {
         while (minesPosition.size() < game.getMines()){
             minesPosition.add(rdm.nextInt(gameCells)+1);
         }
+
         for(int i = 1; i <= game.getRows(); i++){
             for(int j = 1; j<=game.getColumns();j++){
                 Cell cell = new Cell();
@@ -37,13 +38,35 @@ public class CellServiceImpl implements CellService {
                     cell.setMine(true);
                     cell.setValue(-1);
                 }
+                else {
+                    cell.setMine(false);
+                    cell.setValue(0);
+                }
                 gameField.add(cell);
             }
         }
-        gameField = cellRepository.saveAll(gameField);
-        for(Cell cell: gameField){
+
+        for(int minePosition: minesPosition){
+            Cell c = gameField.get(minePosition-1);
+            int x = 0;
+            int y = 0;
+            int posAd = 0;
+            for (int i = -1; i <=1;i++){
+                for (int j = -1; j <= 1; j++){
+                    x = c.getXPosition() + j;
+                    y = c.getYPosition() + i;
+                    if(x > 0 && x <= game.getColumns() && y > 0 && y <= game.getRows()){
+                        posAd = ((y-1)*game.getColumns())+x;
+                        Cell cellN = gameField.get(posAd-1);
+                        gameField.get(posAd-1).setValue(cellN.isMine()?cellN.getValue():cellN.getValue()+1);
+                    }
+                }
+            }
 
         }
+
+
+
 
         return cellRepository.saveAll(gameField);
     }
@@ -56,5 +79,9 @@ public class CellServiceImpl implements CellService {
     @Override
     public long saveMove(Cell cell) {
        return cellRepository.save(cell).getId();
+    }
+    @Override
+    public List<Cell> saveAll(List<Cell> cells){
+        return cellRepository.saveAll(cells);
     }
 }

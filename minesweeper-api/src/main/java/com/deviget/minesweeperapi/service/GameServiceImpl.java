@@ -87,48 +87,85 @@ public class GameServiceImpl implements GameService{
 
     @Override
     public MoveResponse move(Game game, MoveRequest move) {
+        ModelMapper modelMapper = new ModelMapper();
+        CellResponse[][] gameField = new CellResponse[game.getRows()][game.getColumns()];
         List<Cell> cells = cellService.findAllByGameId(game.getId());
         MoveResponse response = new MoveResponse();
-        Cell currentCell = cells.stream().filter(c -> c.getXPosition() == move.getXPosition()&&
-                        c.getYPosition() == move.getYPosition())
-                .findFirst().orElse(null);
-        CellResponse[][] gameField = new CellResponse[game.getRows()][game.getColumns()];
-        if(move.isFlag()){
-            currentCell.setFlag(true);
-            for(Cell cell : cells){
-                CellResponse moveCell = new CellResponse();
-                moveCell.setFlag(true);
-                moveCell.setXPosition(move.getXPosition());
-                moveCell.setYPosition(move.getYPosition());
-                gameField[cell.getXPosition()][cell.getYPosition()] = moveCell;
-            }
-            cellService.saveMove(currentCell);
-            response.setGameField(gameField);
-            response.setGameId(game.getId());
-            response.setGameStatus(GameStatus.INPROCESS.toString());
-            response.setGameTime(game.getGameTime() + ChronoUnit.SECONDS.between(game.getLastRestartDate(),LocalDateTime.now()));
-            return response;
+        Cell currentCell;
+        if(move.getId()!=null){
+            currentCell = cells.stream().filter(c -> c.getId()==move.getId()).findFirst().orElse(null);
+        }else{
+           currentCell = cells.stream().filter(c -> c.getXPosition() == move.getXPosition()
+                    && c.getYPosition() == move.getYPosition()).findFirst().orElse(null);
         }
+
+
+        LocalDateTime date = LocalDateTime.now();
+        long gameTime = game.getGameTime() + ChronoUnit.SECONDS.between(game.getLastRestartDate(),date);
+
+        if(currentCell==null)
+            return null;
+
+
+        if(move.getFlag()!= currentCell.isFlag() || currentCell.isFlag() ){
+            currentCell.setFlag(!currentCell.isFlag());
+            cellService.saveMove(currentCell);
+            response.setGameStatus(GameStatus.INPROCESS.toString());
+            for(Cell cell : cells){
+                CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
+                if(!cell.isRevealed()){
+                    moveCell.setValue(null);
+                    moveCell.setMine(null);
+                }
+                gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
+            }
+        }else
         if(currentCell.isMine()){
             game.setGameStatus(GameStatus.DEFEAT);
-            game.setGameTime(game.getGameTime() + ChronoUnit.SECONDS.between(game.getLastRestartDate(),LocalDateTime.now()));
+            game.setGameTime(gameTime);
+            response.setGameStatus(game.getGameStatus().toString());
             for(Cell cell : cells){
-                CellResponse moveCell = new CellResponse();
-                moveCell.setFlag(true);
-                if(cell.isMine()){
-                    moveCell.setValue(cell.getValue());
-                    moveCell.setMine(true);
+                CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
+                moveCell.setRevealed(true);
+                cell.setRevealed(true);
+                gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
+            }
+            cellService.saveAll(cells);
+        }else
+        if(currentCell.getValue() > 0){
+            currentCell.setRevealed(true);
+            cellService.saveMove(currentCell);
+            response.setGameStatus(GameStatus.INPROCESS.toString());
+            for(Cell cell : cells){
+                CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
+                if(!cell.isRevealed()){
+                    moveCell.setValue(null);
+                    moveCell.setMine(null);
                 }
-                moveCell.setXPosition(move.getXPosition());
-                moveCell.setYPosition(move.getYPosition());
-                gameField[cell.getXPosition()][cell.getYPosition()] = moveCell;
+                gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
+            }
+
+        }else
+        if(currentCell.getValue() == 0){
+            List<Cell> gameFieldUpdated = cellService.saveAll(this.revealBlock(cells,currentCell,game));
+            for(Cell cell : gameFieldUpdated){
+                CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
+                gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
+            }
+            long moves = cells.stream().filter(c->c.isRevealed()).count();
+            if(moves+game.getMines()== cells.size()){
+                response.setGameStatus(GameStatus.VICTORY.toString());
+            }else{
+                response.setGameStatus(GameStatus.INPROCESS.toString());
             }
         }
+        game.setLastMoveDate(date);
+        gameRepository.save(game);
+        response.setGameField(gameField);
+        response.setGameId(game.getId());
+        response.setGameTime(gameTime);
 
-
-
-
-        return null;
+        return response;
     }
 
     private boolean validate(GameRequest game){
@@ -146,6 +183,30 @@ public class GameServiceImpl implements GameService{
         }
 
         return true;
+    }
+
+    private List<Cell> revealBlock(List<Cell> gameField, Cell cell,Game game){
+        cell.setRevealed(true);
+        int x = 0;
+        int y = 0;
+        int posAd = 0;
+        for (int i = -1; i <=1;i++){
+            for (int j = -1; j <= 1; j++){
+                x = cell.getXPosition() + j;
+                y = cell.getYPosition() + i;
+                if(x > 0 && x <= game.getColumns() && y > 0 && y <= game.getRows()){
+                    posAd = ((y-1)*game.getColumns())+x;
+                    Cell cellN = gameField.get(posAd-1);
+                    if(cellN.getValue() == 0 && !cellN.isRevealed()){
+                        revealBlock(gameField,cellN,game);
+                    }
+                    if(cellN.getValue()>0){
+                        cellN.setRevealed(true);
+                    }
+                }
+            }
+        }
+        return gameField;
     }
 
 }
