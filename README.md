@@ -22,7 +22,7 @@ This repository contains an API which expose all the endpoints requiere to play 
 3- Allow user to play a cell by id or (X,Y) values: flexibility for ui implementations, developers use differents data structures in UI.<br />
 
 # Tech stack
-Leguage : Java 8<br />
+Lenguage : Java 8<br />
 Framework: Spring boot 2.4.5,JPA<br /> 
 Project build type: Maven<br />
 DB: Mysql<br />
