@@ -21,4 +21,6 @@ public interface GameService {
     String deleteGame(Long gameId);
 
     MoveResponse move(Game game, MoveRequest move);
+
+    MoveResponse getGameField(Game game);
 }

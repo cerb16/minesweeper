@@ -15,15 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/${spring.data.rest.base-path}/api/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
     @PostMapping("/")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
         if(userService.getByUserName(user.getUserName()) == null){
             return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
         }else{
@@ -32,18 +34,19 @@ public class UserController {
     }
 
     @PutMapping ("/")
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED);
     }
     @GetMapping("/")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
-    @GetMapping("/{userid}")
+
+    @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById( @PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
-    @GetMapping("")
+    @GetMapping("/username")
     public ResponseEntity<?> getByUserName( @RequestParam("username") String userName) {
         return ResponseEntity.ok(userService.getByUserName(userName));
     }

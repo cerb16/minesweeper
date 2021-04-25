@@ -107,7 +107,7 @@ public class GameServiceImpl implements GameService{
             return null;
 
 
-        if(move.getFlag()!= currentCell.isFlag() || currentCell.isFlag() ){
+        if(move.getFlag() !=null && (move.getFlag()!= currentCell.isFlag() || currentCell.isFlag() )){
             currentCell.setFlag(!currentCell.isFlag());
             cellService.saveMove(currentCell);
             response.setGameStatus(GameStatus.INPROCESS.toString());
@@ -128,6 +128,8 @@ public class GameServiceImpl implements GameService{
                 CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
                 moveCell.setRevealed(true);
                 cell.setRevealed(true);
+                cell.setFlag(false);
+                moveCell.setFlag(false);
                 gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
             }
             cellService.saveAll(cells);
@@ -150,6 +152,10 @@ public class GameServiceImpl implements GameService{
             List<Cell> gameFieldUpdated = cellService.saveAll(this.revealBlock(cells,currentCell,game));
             for(Cell cell : gameFieldUpdated){
                 CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
+                if(!cell.isRevealed()){
+                    moveCell.setValue(null);
+                    moveCell.setMine(null);
+                }
                 gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
             }
             long moves = cells.stream().filter(c->c.isRevealed()).count();
@@ -159,8 +165,62 @@ public class GameServiceImpl implements GameService{
                 response.setGameStatus(GameStatus.INPROCESS.toString());
             }
         }
+
+
         game.setLastMoveDate(date);
         gameRepository.save(game);
+        response.setGameField(gameField);
+        response.setGameId(game.getId());
+        response.setGameTime(gameTime);
+
+        return response;
+    }
+
+    @Override
+    public MoveResponse getGameField(Game game) {
+        ModelMapper modelMapper = new ModelMapper();
+        CellResponse[][] gameField = new CellResponse[game.getRows()][game.getColumns()];
+        List<Cell> cells = cellService.findAllByGameId(game.getId());
+        MoveResponse response = new MoveResponse();
+        LocalDateTime date = LocalDateTime.now();
+        long gameTime = game.getGameTime() + ChronoUnit.SECONDS.between(game.getLastRestartDate(),date);
+        for(Cell cell : cells){
+            CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
+            if(!cell.isRevealed()){
+                moveCell.setValue(null);
+                moveCell.setMine(null);
+            }
+            gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
+        }
+        String[] gameFieldView = new String[game.getRows()];
+
+        for(int i = 0; i < game.getRows();i++)
+        {
+            StringBuilder entry = new StringBuilder();
+            for(int j = 0; j < game.getColumns();j++)
+            {
+                if(gameField[i][j].getFlag()){
+                    entry.append("F ");
+                }else if(!gameField[i][j].getRevealed()){
+                    entry.append("H ");
+                }else{
+                    switch (gameField[i][j].getValue()){
+                        case -1:
+                            entry.append("M ");
+                            break;
+                        case 0:
+                            entry.append("0 ");
+                            break;
+                        default:entry.append(gameField[i][j].getValue()+" ");
+                    }
+                }
+
+            }
+            gameFieldView[i] = entry.toString();
+        }
+        response.setGameStatus(game.getGameStatus().toString());
+        response.setGameFieldView(gameFieldView);
+        game.setLastMoveDate(date);
         response.setGameField(gameField);
         response.setGameId(game.getId());
         response.setGameTime(gameTime);
