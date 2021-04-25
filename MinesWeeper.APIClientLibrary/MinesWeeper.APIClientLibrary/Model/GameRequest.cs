@@ -6,7 +6,7 @@ namespace MinesWeeper.APIClientLibrary.Model
 {
     public class GameRequest
     {
-        public long id { set; get; }
+        public long? id { set; get; }
 
         public long userId { set; get; }
 

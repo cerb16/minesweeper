@@ -8,9 +8,9 @@ namespace MinesWeeper.APIClientLibrary.Model
     {
         public long id { set; get; }
 
-        public int xPosition { set; get; }
+        public int xposition { set; get; }
 
-        public int yPosition { set; get; }
+        public int yposition { set; get; }
 
         public bool flag { set; get; }
     }

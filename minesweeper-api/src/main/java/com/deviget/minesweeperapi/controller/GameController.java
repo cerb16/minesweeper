@@ -55,7 +55,7 @@ public class GameController {
     @PutMapping("/{gameId}/move")
     public ResponseEntity<?> move (@PathVariable Long gameId, @RequestBody MoveRequest move) {
         Game game = gameService.getGameById(gameId);
-        if(move.getId()== null && (move.getYPosition() == null && move.getYPosition() == null)){
+        if((move.getId()== null || move.getId() > 0 )&& ((move.getYPosition() == null || move.getYPosition() > 0 )&&( move.getXPosition() == null || move.getXPosition() > 0))){
             return new ResponseEntity<>("You must indicate which cell you are playing", HttpStatus.BAD_REQUEST);
         }
         if(game != null && game.getGameStatus() == GameStatus.INPROCESS && !game.isPause()){

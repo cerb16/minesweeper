@@ -27,7 +27,7 @@ namespace MinesWeeper.APIClientLibrary.Model
 
         public DateTime lastMoveDate { set; get; }
 
-        public long gameTime { set; get; }
+        public long? gameTime { set; get; }
     }
 
     

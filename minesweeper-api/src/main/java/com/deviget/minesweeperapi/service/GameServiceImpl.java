@@ -43,7 +43,7 @@ public class GameServiceImpl implements GameService{
         game.setUser(userService.getUserById(gameRequest.getUserId()));
         game.setGameStatus(GameStatus.INPROCESS);
         Game gameCreated =  gameRepository.save(game);
-        cellService.generateGameField(game);
+        cellService.generateGameField(gameCreated);
         return gameCreated;
     }
 
@@ -92,7 +92,7 @@ public class GameServiceImpl implements GameService{
         List<Cell> cells = cellService.findAllByGameId(game.getId());
         MoveResponse response = new MoveResponse();
         Cell currentCell;
-        if(move.getId()!=null){
+        if(move.getId()!=null && move.getId() != 0){
             currentCell = cells.stream().filter(c -> c.getId()==move.getId()).findFirst().orElse(null);
         }else{
            currentCell = cells.stream().filter(c -> c.getXPosition() == move.getXPosition()
@@ -137,7 +137,6 @@ public class GameServiceImpl implements GameService{
         if(currentCell.getValue() > 0){
             currentCell.setRevealed(true);
             cellService.saveMove(currentCell);
-            response.setGameStatus(GameStatus.INPROCESS.toString());
             for(Cell cell : cells){
                 CellResponse moveCell = modelMapper.map(cell,CellResponse.class);
                 if(!cell.isRevealed()){
@@ -145,6 +144,13 @@ public class GameServiceImpl implements GameService{
                     moveCell.setMine(null);
                 }
                 gameField[cell.getYPosition()-1][cell.getXPosition()-1] = moveCell;
+            }
+            long moves = cells.stream().filter(c->c.isRevealed()).count();
+            if(moves+game.getMines()== cells.size()){
+                response.setGameStatus(GameStatus.VICTORY.toString());
+                game.setGameStatus(GameStatus.VICTORY);
+            }else{
+                response.setGameStatus(GameStatus.INPROCESS.toString());
             }
 
         }else
@@ -161,6 +167,7 @@ public class GameServiceImpl implements GameService{
             long moves = cells.stream().filter(c->c.isRevealed()).count();
             if(moves+game.getMines()== cells.size()){
                 response.setGameStatus(GameStatus.VICTORY.toString());
+                game.setGameStatus(GameStatus.VICTORY);
             }else{
                 response.setGameStatus(GameStatus.INPROCESS.toString());
             }
