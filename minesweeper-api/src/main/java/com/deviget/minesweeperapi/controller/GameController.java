@@ -84,7 +84,7 @@ public class GameController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getByGameName( @PathVariable long userId) {
+    public ResponseEntity<?> getAllGamesByUser( @PathVariable long userId) {
         return ResponseEntity.ok(gameService.getAllGamesByUser(userId));
     }
 
