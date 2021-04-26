@@ -28,3 +28,30 @@ Project build type: Maven<br />
 DB: Mysql<br />
 API-ui: Swagger<br />
 
+# API Endpoints
+User-Controller
+1- Get /minesweeper/api/user/ Get all de users <br />
+2- Put /minesweeper/api/user/ Update one user<br />
+3- Post /minesweeper/api/user/ Create user <br />
+4- Get /minesweeper/api/user/{useriId} get a user by Id<br />
+5- Get /minesweeper/api/user/username?username={username} get a user by userName<br />
+6- Delete /minesweeper/api/user/{userId} delete a user by userId<br />
+
+Game-controller
+1- Put /minesweeper/api/game/{gameId}/pause-resume: Pause the game <br />
+2- Put /minesweeper/api/game/{gameId}/move: Generate a move this can be reveal a cell or flag it<br />
+3- Post /minesweeper/api/game/ Create a new game and the game field <br />
+4- Get /minesweeper/api/game/{gameId} get a game by Id<br />
+5- Get /minesweeper/api/game/{gameId}/gamefield get the updated gamefield and information about the game like status and game time<br />
+6- Get /minesweeper/api/game/ get all the games <br />
+7- Get /minesweeper/api/game/{userId} get all the games for a given user<br />
+8- Delete /minesweeper/api/user/{gameId} delete a game by gameId<br />
+
+
+# Accesing the API:
+1- Create your own client pointing to http://{server}:8002/minesweeper/api/....<br />
+2- Swagger-ui  http://{server}:8002/swagger-ui.html<br />
+3- .Net client library: you can get the Nuget or dll for the library MinesWeeper.APIClientLibrary (.Net project in this repo)<br />
+
+# AWS
+This API was  deployed to ec2-18-217-192-129.us-east-2.compute.amazonaws.com (this is an EC2 instance), is pause till you request access (this because cost, I am out of free usage time), normaly I use elastic beanstalk to implement this kind of application but because cost I used a regular EC2 on demand instace 
