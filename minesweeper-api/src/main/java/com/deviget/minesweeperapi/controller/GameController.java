@@ -10,6 +10,7 @@ import com.deviget.minesweeperapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/${spring.data.rest.base-path}/api/game")
 public class GameController {
@@ -55,7 +57,7 @@ public class GameController {
     @PutMapping("/{gameId}/move")
     public ResponseEntity<?> move (@PathVariable Long gameId, @RequestBody MoveRequest move) {
         Game game = gameService.getGameById(gameId);
-        if((move.getId()== null || move.getId() > 0 )&& ((move.getYPosition() == null || move.getYPosition() > 0 )&&( move.getXPosition() == null || move.getXPosition() > 0))){
+        if((move.getId()== null || move.getId() == 0 )&& ((move.getYPosition() == null || move.getYPosition()== 0 )&&( move.getXPosition() == null || move.getXPosition() == 0))){
             return new ResponseEntity<>("You must indicate which cell you are playing", HttpStatus.BAD_REQUEST);
         }
         if(game != null && game.getGameStatus() == GameStatus.INPROCESS && !game.isPause()){

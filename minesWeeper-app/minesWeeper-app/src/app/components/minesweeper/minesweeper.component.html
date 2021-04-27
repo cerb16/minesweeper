@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Mines Weeper</h4>
+        <p class="card-description">Insert the info to start the game</p>
+        <div class="mt-4">
+          <form name="form-bonoNuevo" (ngSubmit)="newGame()" >
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="UserName">UserName</label>
+              <div class="col-sm-3">
+                <input type="text" name="UserName" class="form-control" id="UserName" [(ngModel)]="user.userName"
+                    />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="nombre">Rows</label>
+              <div class="col-sm-3">
+                <input type="text" name="Rows" class="form-control" id="Rows" [(ngModel)]="gameRequest.rows"
+                  />
+              </div>
+            </div>
+            <div class="form-group row" >
+              <label class="col-sm-3 col-form-label" for="nombre">Colums</label>
+              <div class="col-sm-3">
+                <input type="text" name="Rows" class="form-control" id="Rows" [(ngModel)]="gameRequest.columns"
+                  />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="Mines">Mines</label>
+              <div class="col-sm-3">
+                <input type="text" name="Mines" class="form-control" id="Mines" [(ngModel)]="gameRequest.mines"
+                 />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary mr-2">New Game</button>
+          </form>
+          <br/>
+          <br/>
+          <div class="row form-group " *ngFor="let rows of cells">
+            <div class="col-sm-1" *ngFor="let cell of rows">
+              <button class="btn btn-info" (click)="playCell(cell)">{{cell.revealed?cell.value:'H'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
